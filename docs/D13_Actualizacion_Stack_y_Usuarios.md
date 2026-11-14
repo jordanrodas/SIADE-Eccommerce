@@ -1,36 +1,35 @@
+# Actualización de propuesta arquitectónica — SIADE
 
-## Actualización de propuesta arquitectónica — 14 de noviembre de 2026
+**Fecha:** 14 de noviembre de 2026  
+**Estado:** propuesta del proyecto; pendiente de aprobación del tutor y de las políticas de FARWEST. Esta actualización reemplaza las decisiones previas de stack y usuarios para la propuesta vigente; no confirma aprobación empresarial ni integraciones reales.
 
-Esta actualización reemplaza para la propuesta vigente las decisiones de stack y el alcance/roles descritos en versiones anteriores de D13. Sigue siendo una propuesta del proyecto pendiente de aprobación del tutor y de las políticas de FARWEST; no afirma aprobación empresarial ni conexión real a canales.
-
-### Stack propuesto actualizado
+## Stack
 
 - Frontend: React + TypeScript.
 - Backend/API: Python + Django REST Framework.
-- Persistencia: PostgreSQL.
-- Arquitectura: monolito modular; un backend desplegable, módulos con responsabilidades y contratos claros, adaptadores por canal. No se proponen microservicios.
-- Integraciones reales: no se habilitan sin validar permisos, ambiente de pruebas, documentación y responsable. Mientras tanto, mantener simulador separado.
-- Procesamiento asíncrono/cola, gestor de secretos e infraestructura de despliegue: pendientes de decisión; usar credenciales ficticias en demostración.
+- Persistencia: PostgreSQL mediante Django ORM.
+- Arquitectura: monolito modular, un backend desplegable con apps de dominio y adaptadores de canal independientes.
+- Cola de tareas, gestor de secretos, infraestructura y despliegue: pendientes.
 
-### Usuarios y alcance actualizado
+## Usuarios y funciones
 
 - Dos administrativos: CRUD de productos maestros y consulta del registro de movimientos.
-- Una vendedora: consulta de pedidos, cambio de estados permitidos por canal y obtención de etiquetas generadas por las plataformas seller.
-- Canales previstos: Falabella Seller Center, Ripley/Mirakl y WooCommerce; Mercado Libre queda como futura ampliación mediante otro adaptador.
-- Prioridad funcional: catálogo maestro con variantes, mapeos y publicación/seguimiento; añadir la vista de pedidos y las acciones de estado/etiquetas requeridas por la vendedora, supeditadas a las capacidades verificadas de cada API. La sincronización de stock queda posterior.
-- Los movimientos de producto conservan actor, fecha y cambio. Pedidos y movimientos no se borran desde SIADE. Archivar un producto local no lo elimina del marketplace.
+- Una vendedora: consulta de pedidos, cambios de estado permitidos y obtención de las etiquetas generadas por plataformas seller.
 
-### Modularidad, SOLID y CRUD
+## Alcance
 
-Módulos lógicos: identidad/permisos; catálogo y variantes; cuentas seller/canales; mapeos de canal; publicaciones y seguimiento; pedidos/estados; etiquetas; auditoría/movimientos; adaptadores Falabella, Ripley, WooCommerce y futuro Mercado Libre.
+Catálogo maestro y variantes, mapeos por canal, publicaciones y seguimiento, historial de movimientos, consulta de pedidos, cambios permitidos y etiquetas cuando cada integración lo soporte. Canales previstos: Falabella Seller Center, Ripley/Mirakl y WooCommerce; Mercado Libre queda como ampliación futura. Stock avanzado queda posterior.
 
-Aplicar SOLID dentro del monolito: responsabilidad única por módulo; extensibilidad mediante adaptadores; contratos sustituidos coherentemente; interfaces por capacidades; y casos de uso dependientes de contratos, no de integraciones concretas. CRUD íntegro en productos, variantes, cuentas y mapeos; bajas lógicas con auditoría. Los estados de pedidos se cambian solo mediante transiciones soportadas por el canal, no como edición arbitraria.
+## Estructura modular propuesta
 
-### Validaciones por canal
+Backend: identidad/permisos, cuentas de canal, catálogo, mapeos, publicaciones, pedidos, etiquetas, auditoría y contratos/adaptadores. Frontend: features de catálogo, movimientos, conexiones, mapeos, publicaciones, pedidos y etiquetas. SOLID se aplica dentro del monolito; no se crean microservicios.
 
-- Falabella: la colección compartida contiene productos, imágenes, feeds, pedidos/ítems, documentos y cambios de estado. Debe verificarse qué operación entrega la etiqueta de envío.
-- Ripley/Mirakl: Postman muestra importación CSV multipart y consultas de estado/errores; la colección también presenta una sección de órdenes. Deben verificarse autenticación, entorno, columnas y las operaciones que entregan etiquetas.
-- WooCommerce: validar permisos/API de pedidos y cambios de estado. La etiqueta depende del plugin o servicio de envío de la tienda; no se asume que WooCommerce core la genere.
-- Mercado Libre: pendiente de documentación, permisos, operaciones y alcance.
+CRUD íntegro aplica a recursos administrados por SIADE, con autorización backend, validación y auditoría. Para producto, baja lógica conserva historial; no elimina el recurso en un marketplace. Pedidos, movimientos y resultados ejecutados no se borran ni tienen estados editables arbitrariamente. Cada cambio de estado de pedido debe corresponder a una transición soportada por el canal.
 
-El backend autoriza acciones por rol. React no sustituye el control de permisos del servidor. Rutas HTTP detalladas se documentarán al implementarlas, sin presentarlas como endpoints existentes.
+## Pendientes de validación
+
+- Aprobación del stack por tutor y compatibilidad con políticas de FARWEST.
+- Permisos precisos para los dos administrativos y la vendedora.
+- Operaciones de pedidos/etiquetas por canal; especialmente proveedor/plugin de envíos de WooCommerce.
+- Ambiente de pruebas, permisos, límites y formatos de las APIs. El simulador local permanece separado y ninguna integración se considera activa.
+- Gestión segura de secretos, cola/worker y entorno de despliegue.

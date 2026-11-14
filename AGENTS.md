@@ -1,86 +1,48 @@
 # AGENTS.md
 
-## 1. Contexto del proyecto
+## Contexto y fuente de verdad
 
-Este repositorio corresponde a SIADE, proyecto de prácticas preprofesionales de Jordan André Rodas Panaifo (20200285) en FARWEST, área de Marketing y Ecommerce. El nombre desarrollado en los documentos es Sistema de Integración y Automatización de Datos para E-commerce.
+SIADE es el proyecto de prácticas preprofesionales en FARWEST, Marketing y Ecommerce. El Hito 1 es el baseline documental. La arquitectura vigente propuesta se describe en `docs/Arquitectura_C4_SIADE.md` y `docs/D13_Actualizacion_Stack_y_Usuarios.md`; ambas siguen sujetas a aprobación del tutor y políticas de FARWEST. El D13 histórico conserva decisiones previas y debe leerse junto con su actualización.
 
-El proyecto debe demostrar el ciclo de vida del software y producir un MVP académico demostrable. Consulta README.md y los documentos de docs/ antes de cambiar alcance o decisiones.
+Distingue hechos informados, propuestas e hipótesis. No declares aprobaciones empresariales ni integraciones reales sin evidencia. Antes de cambiar el alcance, revisa `docs/Documento_Diseno_Analisis_SIADE.md`, `docs/Acta_Cierre_Hito1_SIADE.md` y los documentos de arquitectura actualizados.
 
-## 2. Estado y fuentes de verdad
+## Arquitectura vigente propuesta
 
-- El Hito 1 está consolidado como baseline documental; consulta docs/Acta_Cierre_Hito1_SIADE.md y docs/Documento_Diseno_Analisis_SIADE.md.
-- La propuesta de arquitectura y tecnologías está en docs/Arquitectura_Preliminar_y_Estructura_SIADE.md (D13). Sigue pendiente de aprobación del tutor y de las políticas de FARWEST. No la describas como una decisión empresarial confirmada.
-- Consulta docs/Cronograma_y_Plan_General_SIADE.md y docs/cronogramas/Cronograma_SIADE_Hito1_v3.xlsx para semanas, entregables y prioridades vigentes. No fijes fechas o porcentajes nuevos sin evidencia.
-- El informe parcial es un borrador editable. No lo presentes como aprobado o final.
-- Distingue en documentos y respuestas los hechos confirmados, propuestas, hipótesis y pendientes de validación.
-- Los diagramas AS-IS describen hipótesis mientras no exista observación confirmada; TO-BE es una propuesta de diseño.
+- Monolito modular, sin microservicios.
+- Frontend: React + TypeScript.
+- Backend/API: Python + Django REST Framework.
+- Persistencia: PostgreSQL.
+- Adaptadores aislados para Falabella Seller Center, Ripley/Mirakl y WooCommerce; Mercado Libre es futuro.
+- La cola de tareas, el gestor de secretos, infraestructura y despliegue siguen pendientes.
+- El simulador local debe mantenerse separado de los adaptadores externos. No implementar conexiones reales sin canal/cuenta, autorización, ambiente y permisos validados.
 
-## 3. Alcance funcional
+## Usuarios y alcance actualizado
 
-Prioriza el MVP en:
+- Dos usuarios administrativos: CRUD de productos maestros y consulta del historial de movimientos.
+- Una vendedora: consulta pedidos, cambia estados permitidos por el canal y obtiene etiquetas que las plataformas seller generen.
+- MVP: catálogo maestro/variantes, mapeos, publicaciones y seguimiento; además, pedidos/estados/etiquetas requeridos por la vendedora según capacidades verificadas.
+- Sincronización avanzada de stock queda posterior. No incluir despacho físico, facturación/boleteo ni tickets de soporte sin cambio de alcance aprobado.
 
-1. Catálogo maestro de productos.
-2. Variantes cuando el caso las requiera.
-3. Preparación de contenido por canal sin alterar los datos maestros.
-4. Validación visible y resultados por canal claramente identificados como simulados mientras no exista integración autorizada.
+## Organización del monolito
 
-Pedidos y reposición de stock son complementarios y se priorizan después del catálogo. Quedan fuera del alcance del MVP la logística y despacho físico, facturación o boleteo y tickets de soporte.
+El backend se organiza por aplicaciones de dominio: identidad/permisos, cuentas de canal, catálogo, mapeos, publicaciones, pedidos, etiquetas, auditoría e integraciones. Los adaptadores cumplen contratos internos pequeños. Los casos de uso dependen de interfaces, no de implementaciones de marketplace.
 
-No declares que Web, Saga, Ripley u otro marketplace están conectados. La correspondencia entre canales, cuentas disponibles, reglas de publicación y APIs autorizadas debe validarse con evidencia y responsables de FARWEST.
+Aplicar SOLID sin sobrearquitectura: responsabilidad única; extensión por adaptadores; contratos sustituibles; interfaces segregadas por capacidad; inversión de dependencias. Los estados remotos son resultado de comandos validados, no CRUD arbitrario.
 
-## 4. Arquitectura y tecnologías
+## Datos y seguridad
 
-D13 recomienda, sujeto a aprobación, una aplicación web como monolito modular con responsabilidades separadas:
+- Usar datos ficticios o expresamente autorizados y anonimizados.
+- Nunca solicitar, imprimir o almacenar API keys/tokens en código, repositorio, docs, capturas o logs.
+- Credenciales externas: referencia protegida, obtenida desde gestor de secretos una vez que el entorno aprobado esté definido; no guardar secretos en PostgreSQL ni enviarlos al navegador.
+- Autorización validada en backend por rol; ocultar controles de UI no sustituye autorización.
+- Archivar un producto local no elimina automáticamente el producto remoto. Preservar pedidos, movimientos e historial de publicaciones.
+- No inventar endpoints, formatos o límites. Citar documentación primaria y etiquetar lo pendiente.
 
-- Frontend propuesto: React, TypeScript y Vite.
-- Backend propuesto: Node.js 24 LTS, TypeScript y Express 5.
-- Persistencia propuesta: PostgreSQL 17 y Prisma ORM 7.
-- Desarrollo propuesto: ejecución local y PostgreSQL mediante Docker Compose; usar datos ficticios para la demo.
-- Pruebas propuestas: Vitest y Supertest; Playwright queda opcional.
-- Despliegue portable opcional: imagen Docker y PostgreSQL administrado en una plataforma aprobada. Render puede ser un ejemplo académico; la infraestructura de FARWEST sigue pendiente.
-- Control de versiones: Git. El uso de repositorios remotos, acciones de CI y despliegues automáticos depende de autorización.
+## Trabajo en el repositorio
 
-Estas tecnologías son una propuesta, no una instrucción para instalar dependencias de inmediato. Antes de crear dependencias, migraciones, configuración de nube o contratos técnicos, revisa la aprobación más reciente del tutor y las instrucciones explícitas del usuario. Si el stack cambia, actualiza D13 y los documentos afectados.
-
-No conviertas el proyecto en microservicios sin una necesidad validada y una decisión registrada. Las carpetas frontend/, backend/, prisma/ y tests/ están preparadas, pero no presumas que ya contienen una aplicación implementada.
-
-## 5. APIs e integraciones
-
-- Jordan informó que los sellers se conectan mediante API keys. Trátalo como requisito reportado, no como confirmación del mecanismo de cada marketplace.
-- No inventes endpoints, formatos de cabecera, alcances de claves, contratos ni integraciones. Nunca solicites ni imprimas una API key real.
-- El diseño contempla una API interna entre la interfaz y el backend; solo documenta rutas que existan realmente en el código.
-- No hay que asumir que existe una especificación OpenAPI. Si posteriormente se incorpora OpenAPI, mantenla sincronizada con rutas, métodos, esquemas y respuestas implementados.
-- Mantén un simulador local separado de cualquier adaptador externo. Una respuesta simulada nunca debe mostrarse como publicación real.
-- Antes de implementar un conector, confirma el canal y la cuenta, documentación vigente, permisos, ambiente de prueba y responsable técnico. Registra la decisión en D13 y los documentos relacionados.
-
-## 6. Datos y seguridad
-
-- Usa datos ficticios o datos expresamente autorizados y, cuando sea posible, anonimizados.
-- No incluyas API keys, tokens, credenciales, datos de clientes, precios internos ni información empresarial restringida en el código, ejemplos, capturas, logs, semillas o documentación. Usa el simulador y claves ficticias en el MVP.
-- Una integración futura recuperará claves desde un gestor de secretos del entorno; no guardará su valor en PostgreSQL ni lo expondrá al frontend.
-- No subas archivos .env ni secretos al repositorio. Mantén .env.example sin valores sensibles y respeta el .gitignore.
-- Valida los datos recibidos por la aplicación. No confíes en permisos, roles o identificadores declarados por el cliente.
-- No declares obligatorios los atributos de catálogo o canal hasta contar con una fuente validada.
-
-## 7. Reglas de trabajo con el repositorio
-
-1. Antes de cambiar código, revisa la estructura existente, README.md, este archivo y cualquier AGENTS.md más específico en el componente afectado.
-2. Sigue los límites del monolito modular y reutiliza componentes o reglas existentes cuando corresponda.
-3. Mantén separado el dato maestro del contenido y estado de cada canal.
-4. Haz cambios pequeños relacionados con la tarea. Evita refactorizaciones generales y dependencias innecesarias.
-5. No inventes nombres de tablas, campos, módulos o contratos sin revisar los documentos y el código.
-6. Conserva el prototipo actual como artefacto UI/UX demostrativo; no lo describas como una aplicación con persistencia.
-7. Mantén la documentación del proyecto en español, salvo que una convención técnica existente requiera otro idioma.
-8. No modifiques ni publiques infraestructura de FARWEST. No hagas commit, push, publicación o despliegue salvo que el usuario lo solicite expresamente.
-
-## 8. Verificación y comunicación
-
-- Comprueba los cambios relevantes según lo que solicite el usuario y el estado real del proyecto.
-- No afirmes que una prueba, compilación, integración o despliegue se ejecutó si no se ejecutó.
-- Al finalizar, resume los archivos modificados, las verificaciones realizadas y las decisiones que continúan pendientes.
-- No agregues pruebas ni ejecutes suites de pruebas salvo que el usuario lo pida o las instrucciones de la tarea lo requieran.
-- Si una decisión técnica bloquea el trabajo, explica qué dato falta y continúa con tareas independientes que no dependan de esa decisión.
-
-## 9. Instrucciones por componente
-
-Cada componente puede contener su propio AGENTS.md con reglas más específicas. Revísalo antes de modificar ese componente. Las instrucciones específicas complementan este archivo; si una regla técnica contradice el alcance o el estado de aprobación descrito aquí, conserva la distinción y registra la decisión antes de cambiar arquitectura.
+- Mantener la documentación en español y los límites del monolito modular.
+- No agregar dependencias, migraciones, configuración de nube, integraciones o código de producto hasta que el usuario/tutor autorice iniciar implementación y se validen requisitos.
+- No modificar infraestructura de FARWEST. No hacer commit, push, publicar o desplegar salvo solicitud explícita.
+- Conservar el prototipo UI/UX como demostración: sus datos y acciones son ficticios; no tiene persistencia ni conexión real.
+- No ejecutar ni agregar pruebas salvo que se solicite o las instrucciones de la tarea lo requieran.
+- Al reportar, listar archivos tocados, verificaciones realmente realizadas y pendientes.

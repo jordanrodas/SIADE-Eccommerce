@@ -1,7 +1,16 @@
-# Dependencies and build output
+# Frontend dependencies/build output
 node_modules/
 dist/
 coverage/
+
+# Python virtual environments/cache/build output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Environment and secrets
 .env
