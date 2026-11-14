@@ -215,3 +215,8 @@ El artefacto de despliegue se plantea como una imagen Docker portable. El conten
 - Render: despliegue Docker, conexión a PostgreSQL y límites gratuitos ([Docker](https://render.com/docs/docker), [conexiones](https://render.com/docs/postgresql-creating-connecting), [límites](https://render.com/docs/free)).
 
 Hasta aprobarse con el tutor y FARWEST, esta versión es la recomendación técnica del proyecto. No confirma el proveedor de producción, no habilita datos comerciales reales y no confirma una integración de marketplace.
+
+
+## Actualización de stack, usuarios y alcance (14/11/2026)
+
+La propuesta vigente y los roles actualizados se detallan en [D13_Actualizacion_Stack_y_Usuarios.md](D13_Actualizacion_Stack_y_Usuarios.md), que actualiza las decisiones previas de este documento. Los paneles C4 están en [Arquitectura_C4_SIADE.md](Arquitectura_C4_SIADE.md). Esta propuesta continúa pendiente de aprobación del tutor y de políticas de FARWEST.
