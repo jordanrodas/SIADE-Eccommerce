@@ -14,8 +14,8 @@ Muestra quién usa SIADE y con qué sistemas externos intercambia información. 
 C4Context
     title Panel C4-1: Contexto del sistema SIADE
 
-    Person(admins, "Administrativos (2)", "Crean y mantienen productos maestros; consultan el registro de movimientos")
-    Person(sellerUser, "Vendedora (1)", "Consulta pedidos, cambia estados y obtiene etiquetas de envío")
+    Person(admins, "Administrativos (2)", "Comparten el mismo rol: gestionan productos maestros y consultan movimientos")
+    Person(sellerUser, "Vendedora (1)", "Atiende pedidos y obtiene etiquetas; sin permisos para crear productos ni sincronizar stock")
 
     System(siade, "SIADE", "Centraliza el catálogo maestro y coordina publicaciones por canal")
 
@@ -141,7 +141,7 @@ C4Component
 
 ## CRUD e interacción por rol
 
-Los dos usuarios administrativos pueden crear, consultar, actualizar y archivar productos maestros, además de consultar su registro de movimientos. La vendedora consulta pedidos recibidos desde los canales, cambia estados mediante operaciones que el canal permita y obtiene las etiquetas de envío que la plataforma seller genere. Los permisos se asignan por rol y las acciones sensibles quedan registradas. La baja local preserva historiales; el borrado remoto en marketplace es una acción distinta, explícita y limitada por las reglas del canal.
+Los dos usuarios administrativos tienen un único rol compartido: pueden crear, consultar, actualizar y archivar productos maestros, y consultar el registro de movimientos. La vendedora consulta/atiende pedidos, cambia estados mediante operaciones permitidas y obtiene etiquetas generadas por la plataforma seller; no puede crear productos ni sincronizar stock. Los permisos se asignan por rol y las acciones sensibles quedan registradas. La baja local preserva historiales; el borrado remoto en marketplace es una acción distinta, explícita y limitada por las reglas del canal.
 
 CRUD inicial propuesto para recursos principales:
 
@@ -177,6 +177,14 @@ frontend/
   React + TypeScript: catálogo, ficha, cuentas de canal, mapeos,
   publicaciones y resultados
 ```
+
+## Normalización y reconciliación de catálogo
+
+El gestor de productos centraliza el maestro. Para el caso inicial de calzado se propone estructurar tipo/categoría, plataforma (sí/no/no aplica) y presencia/tipo de taco (sin taco/con taco/no aplica); los valores y atributos adicionales se validan con el responsable de catálogo. Talla/color deben relacionarse con variantes y SKU.
+
+Registrar movimientos de alta, edición, archivado y sincronización con actor, hora, producto, acción y resumen de campos; historial de consulta, sin edición o borrado desde UI.
+
+La diferencia entre productos de Saga/Falabella y Ripley genera un flujo de reconciliación prioritaria: identificar, emparejar por identificador confiable, revisar faltantes/diferencias y aprobar antes de una eventual publicación a Ripley. No inferir equivalencia por nombre ni cambiar stock. El envío real queda sujeto a APIs/permisos verificados.
 
 ## Decisiones pendientes
 

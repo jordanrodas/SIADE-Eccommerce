@@ -157,3 +157,47 @@ Entregar un catálogo interno demostrable que permita buscar, crear y editar una
 ## 7. Puerta de inicio de desarrollo
 
 El Hito 1 documental cerró con D13 v0.1, arquitectura lógica y estructura candidata. D13 v0.3 ya propone React/Vite, Node/Express, PostgreSQL/Prisma y desarrollo local, con nube opcional para demo. Presentar la propuesta al tutor y aprobarla o ajustarla antes de implementar la persistencia. También confirmar si la evaluación espera prototipo, MVP ejecutable o ambos. El conjunto mínimo de demo puede ser el baseline propuesto (código y nombre) hasta que FARWEST valide una ficha real. La investigación de canales continúa en paralelo. No iniciar conectores ni almacenar credenciales hasta validar documentación, canal/cuenta, permisos y responsable técnico.
+
+## Refinamiento posterior de roles y catálogo (14 de noviembre de 2026)
+
+### Roles confirmados por el usuario
+
+- **Administrativo (un solo rol compartido por dos personas):** crear, consultar, editar y archivar productos maestros; consultar movimientos.
+- **Vendedora:** consultar/atender pedidos, cambiar estados que permita el canal y obtener etiquetas. Sin permisos para crear productos ni sincronizar stock.
+- Los permisos deben validarse en backend. La UI solo refleja los permisos.
+
+### Catálogo maestro y normalización inicial
+
+SIADE requiere un gestor de productos como punto de control del maestro. Caso inicial: calzado. Propuesta de atributos estructurados pendiente de validar con responsable de catálogo:
+
+- Categoría/tipo de calzado.
+- Plataforma: `sí`, `no`, `no aplica`.
+- Taco: `sin taco`, `con taco`, `no aplica`; altura y forma pendientes.
+- Variantes por talla/color y SKU.
+
+No fijar obligatorios ni catálogos exhaustivos sin revisar fichas reales autorizadas. Los atributos normalizados deben permitir mapearse a categorías/atributos distintos de cada canal.
+
+### Registro de movimientos
+
+Registrar alta, edición, archivado y operaciones de sincronización: actor administrativo, fecha/hora, producto, tipo de acción y resumen de campos modificados. El historial es de consulta y no se elimina desde la aplicación. No guardar secretos ni datos innecesarios.
+
+### Reconciliación Saga/Falabella → Ripley
+
+Se reporta una diferencia de cobertura: hay más productos en Saga que en Ripley. Incorporar al backlog un flujo de reconciliación que compare los catálogos, identifique coincidencias con un identificador fiable (SKU/EAN por confirmar), liste productos faltantes/diferencias y requiera revisión antes de publicar en Ripley. No asumir equivalencia por descripción ni cambiar stock. La sincronización real no forma parte del cierre del primer sprint: depende de confirmar identificadores, mapeos, permisos y API.
+
+### Sprint 1: objetivo refinado y cierre
+
+**Objetivo:** entregar el gestor interno de productos maestros con CRUD básico, atributos normalizados mínimos de calzado, permisos administrativos compartidos y registro de movimientos. Sin integración real, pedidos ni sincronización de stock.
+
+Criterios mínimos de aceptación:
+
+1. Ambos usuarios administrativos pueden crear, consultar, editar y archivar un producto; un usuario con rol vendedora no puede realizar esas operaciones.
+2. Código/SKU y nombre se validan según reglas acordadas; duplicados de identificador se rechazan con mensaje claro.
+3. Ficha de calzado almacena plataforma y taco como valores estructurados; no texto libre para esos campos.
+4. Alta, edición y archivado dejan movimiento con actor y fecha; historial consultable y no editable.
+5. Buscar/filtrar productos y abrir ficha; los cambios persisten al volver a consultar.
+6. Demo con datos ficticios, sin conexión a canal; recorridos y criterios se demuestran y registran.
+
+**Fuera del cierre del Sprint 1:** pedidos/etiquetas, sincronización de stock, publicación real y reconciliación ejecutable Saga/Falabella–Ripley. La reconciliación debe refinarse como backlog de siguiente sprint cuando se confirme la llave de equivalencia.
+
+**Pendientes que no deben bloquear este Sprint 1:** valores completos de todos los atributos de calzado, operaciones de cada API, entorno productivo y automatización de sincronización. Sí bloquean declarar Done: persistencia funcional, autorización diferenciada y evidencia de aceptación anterior.

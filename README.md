@@ -1,34 +1,41 @@
 # SIADE E-commerce
 
-Proyecto de prácticas preprofesionales en FARWEST, área de Marketing y Ecommerce. El Hito 1 es el baseline documental. La arquitectura actualizada sigue siendo una propuesta pendiente de aprobación del tutor y de políticas de FARWEST.
+Sistema para centralizar productos maestros y operación de canales de venta de FARWEST. La arquitectura acordada para iniciar es un monolito modular: React + TypeScript, Django REST Framework y PostgreSQL. No hay conexiones reales con marketplaces.
 
-## Arquitectura propuesta
+## Estado de inicialización
 
-Monolito modular con React + TypeScript, Python + Django REST Framework y PostgreSQL. No hay microservicios ni integraciones de marketplace implementadas. La cola de tareas, secretos e infraestructura siguen pendientes.
+- Backend Django 5.2 LTS y DRF inicializados en `backend/`.
+- Usuario del sistema configurado con roles `Administrativo` y `Vendedora`.
+- Dependencias Python instaladas en `backend/.venv` y dependencias frontend en `frontend/node_modules`.
+- PostgreSQL está preparado en la configuración, pero el servidor de base de datos todavía debe instalarse o conectarse. Para arrancar localmente mientras tanto, el backend usa SQLite.
+- El CRUD de productos, permisos por caso de uso, operaciones de pedidos y adaptadores de canales quedan para los siguientes pasos del Sprint 1.
 
-Roles modelados: dos administrativos (CRUD de productos maestros e historial de movimientos) y una vendedora (pedidos, cambios de estado permitidos y etiquetas disponibles por canal).
+## Arranque local en Windows
+
+Backend (PowerShell):
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py runserver
+```
+
+Frontend (otra terminal):
+
+```powershell
+cd frontend
+npm run dev
+```
+
+Para activar PostgreSQL cuando esté instalado, copia `backend/.env.example` a `backend/.env`, ajusta sus valores localmente y confirma que el servicio esté disponible. No guardes claves reales en el repositorio.
 
 ## Estructura
 
-- `backend/`: layout propuesto para el proyecto Django y módulos de dominio/integración.
-- `frontend/`: layout propuesto para la aplicación React + TypeScript.
-- `docs/`: análisis, requisitos, arquitectura, investigación, gestión e informe parcial.
-- `docs/cronogramas/`: cronograma activo.
-- `prototipo/`: prototipo UI/UX demostrativo, sin persistencia ni llamadas externas.
-- `tests/`: estrategia/ubicación futura de pruebas; no hay suites implementadas.
+- `backend/config/`: configuración y rutas raíz de Django.
+- `backend/apps/`: módulos de dominio del monolito.
+- `backend/integrations/`: contratos y adaptadores aislados por canal.
+- `frontend/`: aplicación React + TypeScript.
+- `docs/`: requisitos, arquitectura, investigación y planificación.
+- `prototipo/`: demostración UI/UX con datos ficticios, sin persistencia ni llamadas externas.
 
-`prisma/` se retiró porque Prisma pertenecía a la propuesta anterior de persistencia Node.js y no corresponde al stack Django ORM propuesto.
-
-## Documentos principales
-
-- [Diseño y análisis](docs/Documento_Diseno_Analisis_SIADE.md)
-- [Propuesta arquitectónica D13](docs/Arquitectura_Preliminar_y_Estructura_SIADE.md)
-- [Actualización de stack y usuarios](docs/D13_Actualizacion_Stack_y_Usuarios.md)
-- [Arquitectura C4](docs/Arquitectura_C4_SIADE.md)
-- [Cronograma y plan](docs/Cronograma_y_Plan_General_SIADE.md)
-- [Matriz de investigación de canales](docs/Matriz_Investigacion_Integraciones_Canales.md)
-- [Prototipo UI/UX](prototipo/index.html)
-
-## Estado
-
-La reorganización alinea la estructura preparada con el monolito modular propuesto. Backend, frontend y persistencia aún no contienen una aplicación implementada. Falabella, Ripley y WooCommerce no están conectados. Mercado Libre es una integración futura.
+Falabella, Ripley y WooCommerce son los canales previstos. Mercado Libre queda como canal futuro. Las integraciones, sincronizaciones y el CRUD de negocio todavía no están implementados.

@@ -18,9 +18,9 @@ Distingue hechos informados, propuestas e hipótesis. No declares aprobaciones e
 
 ## Usuarios y alcance actualizado
 
-- Dos usuarios administrativos: CRUD de productos maestros y consulta del historial de movimientos.
-- Una vendedora: consulta pedidos, cambia estados permitidos por el canal y obtiene etiquetas que las plataformas seller generen.
-- MVP: catálogo maestro/variantes, mapeos, publicaciones y seguimiento; además, pedidos/estados/etiquetas requeridos por la vendedora según capacidades verificadas.
+- Un rol administrativo compartido por dos usuarios: CRUD de productos maestros y consulta del historial de movimientos.
+- Una vendedora: consulta/atiende pedidos, cambia estados permitidos y obtiene etiquetas de canales; no puede crear productos ni sincronizar stock.
+- Sprint 1: gestor CRUD de productos maestros, atributos normalizados iniciales de calzado, movimientos y permisos. Pedidos/etiquetas para la vendedora y reconciliación Saga/Falabella–Ripley se planifican después; sincronización de stock no está permitida para la vendedora.
 - Sincronización avanzada de stock queda posterior. No incluir despacho físico, facturación/boleteo ni tickets de soporte sin cambio de alcance aprobado.
 
 ## Organización del monolito
